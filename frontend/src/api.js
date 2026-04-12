@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: https://auth-rbac-project.onrender.com
+  baseURL: "https://auth-rbac-project.onrender.com/api"
 });
 
 API.interceptors.request.use((req) => {

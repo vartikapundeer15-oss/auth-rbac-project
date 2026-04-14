@@ -1,33 +1,41 @@
-import { Button, Typography } from "@mui/material";
+import Navbar from "../components/Navbar";
+import { Typography, Box, Paper } from "@mui/material";
 
 export default function Dashboard() {
-
-  const role = localStorage.getItem("role"); // ✅ get role
+  const role = localStorage.getItem("role");
 
   return (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      
-      <Typography variant="h4">
-        Welcome to Dashboard 🎉
-      </Typography>
+    <div>
+      {/* 🔹 Top Navbar */}
+      <Navbar />
 
-      {/* ✅ SHOW ROLE */}
-      <Typography variant="h6" sx={{ mt: 2 }}>
-        Role: {role}
-      </Typography>
-
-      <Button
-        variant="contained"
-        color="error"
-        sx={{ mt: 3 }}
-        onClick={() => {
-          localStorage.clear();
-          window.location.href = "/";
+      {/* 🔹 Main Content */}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
         }}
       >
-        Logout
-      </Button>
+        <Paper
+          elevation={3}
+          sx={{
+            padding: 4,
+            textAlign: "center",
+            borderRadius: 3,
+            minWidth: 300,
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Welcome to Dashboard 🎉
+          </Typography>
 
+          <Typography variant="h6" color="text.secondary">
+            Role: {role}
+          </Typography>
+        </Paper>
+      </Box>
     </div>
   );
 }

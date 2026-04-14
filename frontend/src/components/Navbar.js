@@ -1,25 +1,41 @@
-import { AppBar, Toolbar, Button, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  };
+
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ background: "#1976d2" }}>
       <Toolbar>
-        <Typography sx={{ flexGrow: 1 }}>
-          Auth App
+        
+        {/* App Title */}
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Auth RBAC App 🚀
         </Typography>
 
+        {/* Role */}
+        <Typography sx={{ mr: 2 }}>
+          Role: {role}
+        </Typography>
+
+        {/* Admin Button (only for admin) */}
         {role === "admin" && (
-          <Button color="inherit" href="/admin">Admin</Button>
+          <Button color="inherit" onClick={() => navigate("/admin")}>
+            Admin
+          </Button>
         )}
 
-        <Button color="inherit" onClick={() => {
-          localStorage.clear();
-          window.location.href = "/";
-        }}>
+        {/* Logout */}
+        <Button color="inherit" onClick={handleLogout}>
           Logout
         </Button>
+
       </Toolbar>
     </AppBar>
   );

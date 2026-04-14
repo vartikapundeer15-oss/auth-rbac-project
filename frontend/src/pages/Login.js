@@ -1,83 +1,48 @@
-import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
 import API from "../api";
-import {
-  TextField,
-  Button,
-  CircularProgress,
-  Alert,
-  Box,
-  Paper,
-  Typography
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
-export default function Login() {
-  const { register, handleSubmit } = useForm();
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
-  const navigate = useNavigate();
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onSubmit = async (data) => {
-    setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
-      const res = await API.post("/auth/login", data);
+      const res = await API.post("/auth/login", { email, password });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
 
-      if (res.data.role === "admin") navigate("/admin");
-      else navigate("/dashboard");
+      alert("Login Success");
+      window.location.href = "/dashboard";
 
-    } catch {
-      setMsg("Invalid Credentials");
+    } catch (err) {
+      alert("Invalid Credentials");
     }
-    setLoading(false);
   };
 
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        background: "linear-gradient(to right, #667eea, #764ba2)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center"
-      }}
-    >
-      <Paper elevation={10} sx={{ padding: 4, width: 320, borderRadius: 3 }}>
-        <Typography variant="h5" textAlign="center" mb={2}>
-          Welcome 
-        </Typography>
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <h2>Login</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <TextField
-            label="Email"
-            fullWidth
-            margin="normal"
-            {...register("email", { required: true })}
-          />
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Email"
+          onChange={(e) => setEmail(e.target.value)}
+        /><br /><br />
 
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            {...register("password", { required: true })}
-          />
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        /><br /><br />
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 2 }}
-          >
-            {loading ? <CircularProgress size={20} /> : "Login"}
-          </Button>
-
-          {msg && <Alert sx={{ mt: 2 }}>{msg}</Alert>}
-        </form>
-      </Paper>
-    </Box>
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 }
+
+export default Login;

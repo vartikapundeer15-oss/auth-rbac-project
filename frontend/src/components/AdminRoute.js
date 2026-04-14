@@ -1,12 +1,8 @@
 import { Navigate } from "react-router-dom";
 
-export default function AdminRoute({ children }) {
+const AdminRoute = ({ children }) => {
   const role = localStorage.getItem("role");
+  return role === "admin" ? children : <Navigate to="/dashboard" />;
+};
 
-  if (role !== "admin") {
-    alert("Access Denied! Admins only");
-    return <Navigate to="/dashboard" />;
-  }
-
-  return children;
-}
+export default AdminRoute;

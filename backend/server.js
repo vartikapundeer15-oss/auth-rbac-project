@@ -1,32 +1,39 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+require("dotenv").config();
 
-const app = express(); // ✅ MUST come before using app
+const app = express();
 
-const authRoutes = require("./routes/auth");
-const auth = require("./middleware/auth");
-const role = require("./middleware/role");
-
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect("mongodb://127.0.0.1:27017/authDB")
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
-
 // Routes
+const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
-// Protected route
-app.get("/api/dashboard", auth, (req, res) => {
-  res.json({ msg: "Welcome User" });
+// Root route
+app.get("/", (req, res) => {
+  res.send("API Running 🚀");
 });
 
-// Admin route
-app.get("/api/admin", auth, role("admin"), (req, res) => {
-  res.json({ msg: "Welcome Admin" });
-});
+// MongoDB Connection Function
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected ✅");
+  } catch (error) {
+    console.error("MongoDB Error ❌:", error.message);
+    process.exit(1); // stop server if DB fails
+  }
+};
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// Start Server ONLY after DB connects
+const PORT = process.env.PORT || 5000;
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} 🚀`);
+  });
+});

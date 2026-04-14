@@ -1,43 +1,52 @@
 const express = require("express");
-const router = express.Router(); // ✅ important
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const router = express.Router();
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
-// SIGNUP
+// Signup
 router.post("/signup", async (req, res) => {
-  const { email, password, role } = req.body;
+  try {
+    const { email, password, role } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = new User({
-    email,
-    password: hashedPassword,
-    role
-  });
+    const user = new User({
+      email,
+      password: hashedPassword,
+      role: role || "user"
+    });
 
-  await user.save();
+    await user.save();
+    res.json({ msg: "User registered" });
 
-  res.json({ msg: "User created" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// LOGIN
+// Login
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user) return res.status(400).json({ msg: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ msg: "User not found" });
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) return res.status(400).json({ msg: "Wrong password" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ msg: "Wrong password" });
 
-  const token = jwt.sign(
-    { id: user._id, role: user.role },
-    "SECRET",
-    { expiresIn: "1h" }
-  );
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-  res.json({ token, role: user.role });
+    res.json({ token, role: user.role });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

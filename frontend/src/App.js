@@ -9,6 +9,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Login />} />
 
         <Route path="/dashboard" element={
@@ -18,12 +19,11 @@ function App() {
         } />
 
         <Route path="/admin" element={
-          <ProtectedRoute>
-            <AdminRoute>
-              <Admin />
-            </AdminRoute>
-          </ProtectedRoute>
+          <AdminRoute>
+            <Admin />
+          </AdminRoute>
         } />
+
       </Routes>
     </BrowserRouter>
   );
